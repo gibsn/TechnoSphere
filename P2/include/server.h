@@ -10,7 +10,12 @@ class Server
     Clients clients;
 
     void CreateListeningSocket();
-    void AcceptNewClient();
+    int AcceptNewClient();
+    void AddNewClientEvent(int, struct kevent *&, int &);
+    void ExpandEventList(struct kevent *&, int &);
+    void ResetChangeList(struct kevent *&, int &);
+    void AddToBroadcastQueue(std::string);
+    void DeleteClient(int, struct kevent *&, int &);
     void MainLoop();
 
 public:
