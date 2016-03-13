@@ -41,6 +41,7 @@ clean:
 	rm -f chatsrv
 	rm -rf chatsrv.dSYM
 	rm -f client
+	rm -rf client.dSYM
 	rm -f bridge.touch
 
 .PHONY:
