@@ -61,7 +61,8 @@ int Server::AcceptNewClient()
     }
 
     clients[clients.GetSize() - 1].AddToQueue(std::string("Welcome!\n"));
-    printf("LOG: accepted connection\n");
+    fprintf(stdout, "LOG: accepted connection\n");
+    fflush(stdout);
 
     return new_player_fd;
 }
@@ -114,7 +115,8 @@ void Server::DeleteClient(int fd, struct kevent *&changelist, int &nchanges)
     EV_SET(changelist + 1, fd, EVFILT_WRITE, EV_DELETE, 0, 0, 0);
 
     clients.DeleteClient(fd);
-    printf("LOG: connection terminated\n");
+    fprintf(stdout, "LOG: connection terminated\n");
+    fflush(stdout);
 }
 
 
@@ -150,7 +152,8 @@ void Server::MainLoop()
                 char *msg = clients.GetClientByFd(eventlist[i].ident).Read();
                 if (msg != 0)
                 {
-                    printf("LOG: %s", msg);
+                    fprintf(stdout, "LOG: %s", msg);
+                    fflush(stdout);
                     AddToBroadcastQueue(msg);
                 }
                 else

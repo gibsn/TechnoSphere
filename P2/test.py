@@ -59,7 +59,7 @@ class PipeReader(object):
 
 class TestBase(unittest.TestCase):
     def setUp(self):
-        sys.stderr.write("Staring server.\n")
+        sys.stderr.write("Starting server.\n")
         self.server = subprocess.Popen(Cmdline, stdout=subprocess.PIPE)
         self.reader = PipeReader(self.server.stdout)
         time.sleep(0.1)
@@ -86,13 +86,13 @@ class Test1(TestBase):
     def test_printString(self):
         c = self.newClient()
         c.close()
-            
+
         self.assertTrue(waitFor(lambda: self.reader.countString("accepted connection") == 1),
             "Failed to wait for 'accepted connection' string in logs.")
 
     def test_printString2(self):
         c1 = self.newClient()
-        c2 = self.newClient() 
+        c2 = self.newClient()
         c2.close()
 
         self.assertTrue(waitFor(lambda: self.reader.countString("accepted connection") == 2),
@@ -156,7 +156,7 @@ class Test3(TestBase):
             "Invalid count of 'connection terminated' strings in logs.")
 
         c.close()
-            
+
         self.assertTrue(waitFor(lambda: self.reader.countString("connection terminated") == 1),
             "Invalid count of 'connection terminated' strings in logs.")
 
@@ -171,7 +171,7 @@ class Test3(TestBase):
             "Invalid count of 'connection terminated' strings in logs.")
 
         c.close()
-            
+
         self.assertTrue(waitFor(lambda: self.reader.countString("connection terminated") == 1),
             "Invalid count of 'connection terminated' strings in logs.")
         c1.close()
@@ -225,11 +225,11 @@ class Test6(TestBase):
         c1f.readline()
         c2f.readline()
 
-        c1.sendall("test1\ntest2\n") 
+        c1.sendall("test1\ntest2\n")
         waitFor(lambda: self.reader.countString("test2") == 1)
 
         c2.sendall("test")
-        c2.sendall("3\ntest4\n") 
+        c2.sendall("3\ntest4\n")
 
         msgs = ["test1\n", "test2\n", "test3\n", "test4\n"]
         for msg in msgs:
