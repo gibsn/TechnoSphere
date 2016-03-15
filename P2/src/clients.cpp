@@ -5,7 +5,8 @@
 
 Client::Client(int _fd)
     : fd(_fd),
-    q(std::queue<std::string>())
+    q(std::queue<std::string>()),
+    buf_pos(0)
 {}
 
 
@@ -30,13 +31,23 @@ void Client::Write()
 }
 
 
-char *Client::Read()
+int Client::Read()
 {
-    int n = read(fd, buf, MAX_BUF);
-    buf[n] = '\0';
+    int n = read(fd, buf + buf_pos, MAX_MSG);
+    buf_pos += n;
+    buf[buf_pos] = '\0';
 
-    if (n != 0)
+    return n;
+}
+
+
+char *Client::GetMessage()
+{
+    if (buf[buf_pos - 1] == '\n')
+    {
+        buf_pos = 0;
         return buf;
+    }
     else
         return 0;
 }

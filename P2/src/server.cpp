@@ -12,7 +12,7 @@
 
 #include "clients.h"
 
-#define MAX_BUF 1025
+#define MAX_BUF 10240
 #define MAX_MSG 1024
 
 
@@ -149,12 +149,17 @@ void Server::MainLoop()
             }
             if(eventlist[i].filter == EVFILT_READ)
             {
-                char *msg = clients.GetClientByFd(eventlist[i].ident).Read();
-                if (msg != 0)
+                Client &client = clients.GetClientByFd(eventlist[i].ident);
+                int n = client.Read();
+                if (n != 0)
                 {
-                    fprintf(stdout, "LOG: %s", msg);
-                    fflush(stdout);
-                    AddToBroadcastQueue(msg);
+                    char *msg = client.GetMessage();
+                    if (msg)
+                    {
+                        fprintf(stdout, "LOG: %s", msg);
+                        fflush(stdout);
+                        AddToBroadcastQueue(msg);
+                    }
                 }
                 else
                     DeleteClient(eventlist[i].ident, changelist, nchanges);

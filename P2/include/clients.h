@@ -5,7 +5,7 @@
 #include <string>
 #include <queue>
 
-#define MAX_BUF 1025
+#define MAX_BUF 10240
 #define MAX_MSG 1024
 
 class Client
@@ -13,15 +13,17 @@ class Client
     int fd;
     char buf[MAX_BUF];
     std::queue<std::string> q;
+    int buf_pos;
 
 public:
     Client(int);
     ~Client();
 
     int GetFd() const { return fd; }
+    char *GetMessage();
 
     void Write();
-    char *Read();
+    int Read();
     void AddToQueue(std::string);
 };
 

@@ -10,7 +10,7 @@
 
 #include <string>
 
-#define MAX_BUF 1025
+#define MAX_BUF 10240
 #define MAX_MSG 1024
 
 
@@ -23,6 +23,7 @@ class Application
 
     void EstablishConnection();
     void ReadMessage();
+    void SendMessage();
     void ProcessSelect();
     int ReadFromSocket();
     void MainLoop();
@@ -55,10 +56,6 @@ void Application::EstablishConnection()
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    /*
-    int flags = fcntl(sockfd, F_GETFL, 0);
-    fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
-    */
     if(!inet_aton(ip.c_str(), &addr.sin_addr))
     {
         fprintf(stderr, "Invalid IP, please try again\n\n");
@@ -89,6 +86,18 @@ void Application::ReadMessage()
 }
 
 
+void Application::SendMessage()
+{
+    int pos = 0;
+    while (strlen(buf) > MAX_BUF)
+    {
+        write(sockfd, buf + pos, MAX_BUF);
+        pos += MAX_BUF;
+    }
+    write(sockfd, buf + pos, strlen(buf));
+}
+
+
 int Application::ReadFromSocket()
 {
     int n = read(sockfd, buf, MAX_BUF);
@@ -116,7 +125,7 @@ void Application::ProcessSelect()
     if (FD_ISSET(0, &readfds))
     {
         ReadMessage();
-        write(sockfd, buf, strlen(buf));
+        SendMessage();
     }
     if (FD_ISSET(sockfd, &readfds))
     {
